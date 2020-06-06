@@ -86,6 +86,35 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+            /**
+             * @param parent ListView
+             * @param view 選択した項目
+             * @param position 選択した項目の添え字
+             * @param id 選択した項目のID
+             */
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                // 選択されたビューを取得 TwoLineListItemを取得した後、text2の値を取得する
+                TwoLineListItem two = (TwoLineListItem)view;
+                TextView idTextView = (TextView)two.getText2();
+                String idStr = (String) idTextView.getText();
+
+                // 長押しした項目をデータベースから削除
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    db.execSQL("DELETE FROM MEMO_TABLE WHERE uuid = '"+ idStr +"'");
+                } finally {
+                    db.close();
+                }
+                // 長押しした項目を画面から削除
+                memoList.remove(position);
+                simpleAdapter.notifyDataSetChanged();
+
+                // trueにすることで通常のクリックイベントを発生させないです
+                return true;
+            }
+        });
+
 
         Button newButton = (Button) findViewById(R.id.newButton);
         newButton.setOnClickListener(new View.OnClickListener() {
