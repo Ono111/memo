@@ -77,8 +77,9 @@ public class Main2Activity extends AppCompatActivity {
                 } finally {
                     db.close();
                 }
-                Intent intent = new Intent(Main2Activity.this, MainActivity.class);
-                startActivity(intent);
+                finish();
+//                Intent intent = new Intent(Main2Activity.this, MainActivity.class);
+////                startActivity(intent);
             }
         });
 
