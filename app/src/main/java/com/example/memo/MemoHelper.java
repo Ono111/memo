@@ -35,6 +35,13 @@ public class MemoHelper extends SQLiteOpenHelper {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "uuid TEXT, " +
                 "body TEXT)");
+
+        db.execSQL("CREATE TABLE DATE_TABLE(" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "uuid TEXT, " +
+                "date TEXT, " +
+                "date2 TEXT, " +
+                "date3 TEXT)" );
     }
 
     // データベースをバージョンアップした時に実行される処理
@@ -44,6 +51,7 @@ public class MemoHelper extends SQLiteOpenHelper {
          * テーブルを削除する
          */
         db.execSQL("DROP TABLE IF EXISTS MEMO_TABLE");
+        db.execSQL("DROP TABLE IF EXISTS DATE_TABLE");
 
         // 新しくテーブルを作成する
         onCreate(db);

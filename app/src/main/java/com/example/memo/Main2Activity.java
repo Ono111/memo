@@ -15,6 +15,9 @@ import android.widget.TextView;
 
 import com.example.memo.R;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 public class Main2Activity extends AppCompatActivity {
@@ -63,6 +66,10 @@ public class Main2Activity extends AppCompatActivity {
                 EditText body = (EditText) findViewById(R.id.body);
                 String bodyStr = body.getText().toString();
 
+                String date = getNowDate();
+                String date2 = "";
+                String date3  = "";
+
                 //データベースに保存する
                 SQLiteDatabase db = helper.getWritableDatabase();
                 try {
@@ -72,6 +79,7 @@ public class Main2Activity extends AppCompatActivity {
                         db.execSQL("insert into MEMO_TABLE(uuid, body) VALUES('" + id + "','" + bodyStr + "')");
                     }else{
                         db.execSQL("update MEMO_TABLE set body = '" + bodyStr + "'where uuid = '" + id + "'");
+                        db.execSQL("update DATE_TABLE set date = '" + date + "', date2 = '" + date2 + "', date3 = '" + date3 + "' where uuid = '" +'"');
                     }
 
                 } finally {
@@ -92,6 +100,12 @@ public class Main2Activity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    public static String getNowDate(){
+        final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        final Date date = new Date(System.currentTimeMillis());
+        return df.format(date);
     }
 }
 

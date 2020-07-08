@@ -25,24 +25,30 @@ public class MainActivity extends AppCompatActivity{
     // MemoHelperクラスを定義
     MemoHelper helper = null;
 
+    //アダプターの設定
+    ArrayList<ListItem> memoList = new ArrayList<>();
+    MyListAdapter adapter = new MyListAdapter(this, memoList, R.layout.list_item);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
     }
 
     protected void onResume() {
         super.onResume();
+
+        ListView list = findViewById(R.id.memoList);
+        list.setAdapter(adapter);
+
+        ListItem data = new ListItem();
 
         //ヘルパーを準備する
         if(helper == null){
             helper = new MemoHelper(this);
         }
 
-        //メモリストデータを格納する
-        final ArrayList<HashMap<String, String>> memoList = new ArrayList<>();
 
         //データベースを取得する
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -52,14 +58,16 @@ public class MainActivity extends AppCompatActivity{
 
             //Cursorが存在するのかの確認
             while(c.moveToNext()){
-                HashMap<String, String> data = new HashMap<>();
+
                 //取得された絡むと型を指定してデータを取得する
 
-                String uuid = c.getString(0);
-                String body = c.getString(1);
+                data.setBody(c.getString(0));
+                data.setTitle(c.getString(1));
+                data.setUuid(c.getString(2));
+                data.setDate(c.getString(3));
+                data.setDate2(c.getString(4));
+                data.setDate3(c.getString(5));
 
-                data.put("body", body);
-                data.put("id", uuid);
                 memoList.add(data);
             }
 
@@ -67,19 +75,10 @@ public class MainActivity extends AppCompatActivity{
             db.close();
         }
 
-        //adapter生成
-        final SimpleAdapter simpleAdapter = new SimpleAdapter(this,
-                memoList,
-                android.R.layout.simple_list_item_2,
-                new String[]{"body", "id"},
-                new int[]{android.R.id.text1, android.R.id.text2}
-        );
 
-        ListView listView = (ListView) findViewById(R.id.memoList);
-        listView.setAdapter(simpleAdapter);
 
         //メモをタップしたときの処理
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(MainActivity.this, Main2Activity.class);
@@ -92,7 +91,7 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
             /**
              * @param parent ListView
              * @param view 選択した項目
@@ -109,12 +108,13 @@ public class MainActivity extends AppCompatActivity{
                 SQLiteDatabase db = helper.getWritableDatabase();
                 try {
                     db.execSQL("DELETE FROM MEMO_TABLE WHERE uuid = '"+ idStr +"'");
+                    db.execSQL("DELETE FROM DATE_TABLE WHERE uuid = '" + idStr + "'");
                 } finally {
                     db.close();
                 }
                 // 長押しした項目を画面から削除
                 memoList.remove(position);
-                simpleAdapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
 
                 // trueにすることで通常のクリックイベントを発生させないです
                 return true;
