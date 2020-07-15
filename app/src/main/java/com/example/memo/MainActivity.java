@@ -10,14 +10,10 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import com.example.memo.R;
 
 
 public class MainActivity extends AppCompatActivity{
@@ -56,8 +52,9 @@ public class MainActivity extends AppCompatActivity{
             //rawQueryというSELECT専用メソッドを使用してデータを取得する
             Cursor c = db.rawQuery("select uuid, body from MEMO_TABLE order by id", null);
 
+            c.moveToFirst();
             //Cursorが存在するのかの確認
-            while(c.moveToNext()){
+            while(c.moveTo()){
 
                 //取得された絡むと型を指定してデータを取得する
 
